@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OperationAPI } from "../network/api";
 import { OperationType } from "@/network/types";
+import { NextPage } from "next";
+import router from "next/router";
+import { useAuth } from "@/context/authcontext";
 
 const EMPTY_VALUE = "";
 
-const Calculator: React.FC = () => {
+const Calculator: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [balance, setBalance] = useState<string>(EMPTY_VALUE);
@@ -14,6 +17,15 @@ const Calculator: React.FC = () => {
   const [currentText, setCurrentText] = useState<string>('0');
   const [currentOperation, setCurrentOperation] = useState<string>(EMPTY_VALUE);
   const [errorMessage, setErrorMessage] = useState<string>(EMPTY_VALUE);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+  }, [])
 
   const getOperandValue = (): any[] => {
     const useFirstOperand = currentOperation === EMPTY_VALUE;
@@ -157,72 +169,79 @@ const Calculator: React.FC = () => {
           disabled
         />
       </div>
-      <div className="grid grid-cols-4 gap-2 mb-3">
-        {/* OPERATION SECTION */}
-        {["+", "-", "*", "/"].map((op) => (
+      <div className="grid grid-cols-4 gap-3 mb-3">
+        <div className="col-span-3 grid grid-cols-3 gap-3">
           <button
-            key={op}
+            key="clear"
+            className="bg-red-500 text-white p-4 rounded-full hover:bg-red-400 text-xl"
+            onClick={() => cleanValues(EMPTY_VALUE)}
+          >
+            C
+          </button>
+          <button
+            key="√"
             className="bg-orange-500 text-white p-4 rounded-full hover:bg-orange-400 text-xl"
-            onClick={() => addOperation(op)}
+            onClick={() => addOperation("√")}
           >
-            {op}
+            √
           </button>
-        ))}
-        <button
-          key="clear"
-          className="bg-red-500 text-white p-4 rounded-full hover:bg-red-400 text-xl"
-          onClick={() => cleanValues(EMPTY_VALUE)}
-        >
-          C
-        </button>
-        {/* NUMBERS SECTION */}
-        {[9, 8, 7, 6, 5, 4, 3, 2, 1].map((num) => (
           <button
-            key={num}
-            className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl"
-            onClick={() => addNumber(num)}
+            key="R"
+            className="bg-orange-500 text-white p-4 rounded-full hover:bg-orange-400 text-xl"
+            onClick={() => addOperation("R")}
           >
-            {num}
+            R
           </button>
-        ))}
-        <button
-          key="√"
-          className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl"
-          onClick={() => addOperation("√")}
-        >
-          √
-        </button>
-        <button
-          key="R"
-          className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl"
-          onClick={() => addOperation("R")}
-        >
-          R
-        </button>
-        <button
-          key="0"
-          className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl col-span-2"
-          onClick={() => addNumber(0)}
-        >
-          0
-        </button>
-        <button
-          key="dot"
-          className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl"
-          onClick={() => addDot()}
-        >
-          .
-        </button>
-        <button
-          key="equals"
-          className="bg-green-500 text-white p-4 rounded-full hover:bg-green-400 text-xl"
-          onClick={() => executeEquals()}
-        >
-          =
-        </button>
+          {/* NUMBERS SECTION */}
+          {[9, 8, 7, 6, 5, 4, 3, 2, 1].map((num) => (
+            <button
+              key={num}
+              className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl"
+              onClick={() => addNumber(num)}
+            >
+              {num}
+            </button>
+          ))}
+          <button
+            key="0"
+            className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl col-span-2"
+            onClick={() => addNumber(0)}
+          >
+            0
+          </button>
+          <button
+            key="dot"
+            className="bg-gray-800 text-white p-4 rounded-full hover:bg-gray-700 text-xl"
+            onClick={() => addDot()}
+          >
+            .
+          </button>
+        </div>
+        <div className="grid grid-rows-3 gap-3">
+          {/* OPERATION SECTION */}
+          {["/", "*", "-", "+"].map((op) => (
+            <button
+              key={op}
+              className="bg-orange-500 text-white p-4 rounded-full hover:bg-orange-400 text-xl"
+              onClick={() => addOperation(op)}
+            >
+              {op}
+            </button>
+          ))}
+          <button
+            key="equals"
+            className="bg-green-500 text-white p-4 rounded-full hover:bg-green-400 text-xl row-span-2"
+            onClick={() => executeEquals()}
+          >
+            =
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 export default Calculator;
+
+
+

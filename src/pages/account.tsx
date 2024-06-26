@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/authcontext';
 import { OperationAPI } from '@/network/api';
 import { Record } from '@/network/types';
 import { NextPage } from 'next';
@@ -33,6 +34,7 @@ const Account: NextPage = () => {
   const [data, setData] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
+  const { user } = useAuth();
 
   const columns: Column<Record>[] = useMemo(
     () => [
@@ -107,9 +109,10 @@ const Account: NextPage = () => {
   );
 
   useEffect(() => {
-    //Redirect to account page if authenticated
-    if (!localStorage.getItem('token')) {
+    // Redirect to login page if not authenticated
+    if (!user) {
       router.push('/login');
+      return;
     }
 
     const fetchData = async () => {

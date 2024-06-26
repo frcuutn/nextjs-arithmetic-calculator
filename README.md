@@ -2,6 +2,11 @@
 
 This project harnesses Next.js, Tailwind CSS, and PostgreSQL to create a robust web application. By utilizing Next.js API features, it streamlines both backend and frontend development, saving significant development time.
 
+## Live Version
+You can view the live version of the application here: https://nextjs-arithmetic-calculator.vercel.app/
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/frcuutn/nextjs-arithmetic-calculator)
+
 ## Features
 
 - **Next.js API Routes**: Utilized for building backend APIs, reducing development time.
